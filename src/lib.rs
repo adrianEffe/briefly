@@ -1,7 +1,7 @@
 pub mod routes;
-use axum::routing::get;
+use axum::routing::{get, post};
 use axum::Router;
-use routes::health_check;
+use routes::{health_check, full_url};
 
 pub async fn run() {
     let app = app();
@@ -13,5 +13,7 @@ pub async fn run() {
 }
 
 pub fn app() -> Router {
-    Router::new().route("/health_check", get(health_check))
+    Router::new()
+        .route("/health_check", get(health_check))
+        .route("/full_url", post(full_url))
 }
