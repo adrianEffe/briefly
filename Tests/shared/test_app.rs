@@ -27,4 +27,11 @@ impl TestApp {
     pub fn get(&self, path: &str) -> reqwest::RequestBuilder {
         self.client.get(self.base_url.to_owned() + path)
     }
+
+    pub fn post(&self, path: &str, body: String) -> reqwest::RequestBuilder {
+        self.client
+            .post(self.base_url.to_owned() + path)
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .body(body)
+    }
 }
