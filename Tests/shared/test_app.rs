@@ -31,7 +31,7 @@ impl TestApp {
     pub fn post(&self, path: &str, body: String) -> reqwest::RequestBuilder {
         self.client
             .post(self.base_url.to_owned() + path)
-            .header("Content-Type", "application/x-www-form-urlencoded")
+            .header("Content-Type", "application/json")
             .body(body)
     }
 }
