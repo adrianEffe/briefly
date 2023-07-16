@@ -31,16 +31,21 @@ async fn full_url_returns_422_for_missing_data() {
         assert_eq!(
             422,
             response.status().as_u16(),
-            "The API did not fail with 400 Bad Request when the payload was {}.",
+            "The API did not fail with 422 when the payload was {}.",
             error_message
         );
     }
 }
 
+#[tokio::test]
 async fn full_url_returns_400_for_bad_request() {
     let app = TestApp::new().await;
 
     let body = String::from("bad request");
     let response = app.post("full_url", body).send().await.unwrap();
-    assert_eq!(400, response.status().as_u16());
+    assert_eq!(
+        400,
+        response.status().as_u16(),
+        "The API did not fail with 400."
+    );
 }
