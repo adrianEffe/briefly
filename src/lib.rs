@@ -1,4 +1,6 @@
+pub mod configuration;
 pub mod routes;
+
 use axum::routing::{get, post};
 use axum::Router;
 use routes::{full_url, health_check};
