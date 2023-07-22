@@ -3,12 +3,14 @@ pub mod routes;
 
 use axum::routing::{get, post};
 use axum::Router;
+use configuration::get_configuration;
 use routes::{full_url, health_check};
 
 pub async fn run() {
     let app = app();
-
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
+    let configuration = get_configuration().expect("Failed to read configuration");
+    let address = format!("127.0.0.1:{}", configuration.application_port);
+    axum::Server::bind(&address.parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap()
