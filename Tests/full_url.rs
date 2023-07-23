@@ -1,10 +1,18 @@
 pub mod shared;
 
+use briefly::configuration::get_configuration;
 use shared::test_app::TestApp;
+use sqlx::{Connection, PgConnection};
 
 #[tokio::test]
 async fn full_url_returns_200_for_valid_form_data() {
     let app = TestApp::new().await;
+    let configuration = get_configuration().expect("Failed to read configuration");
+    let connection_string = configuration.database.connection_string();
+
+    let connection = PgConnection::connect(&connection_string)
+        .await
+        .expect("Failed to connect to Postgres");
 
     let body = String::from("{\"url\":\"www.google.com\",\"extension\":\"google\"}");
     let response = app.post("full_url", body).send().await.unwrap();
