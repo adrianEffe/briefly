@@ -1,16 +1,13 @@
 pub mod shared;
 
-use briefly::configuration::get_configuration;
 use shared::test_app::TestApp;
 use sqlx::{Connection, PgConnection};
 
 #[tokio::test]
 async fn full_url_returns_200_for_valid_form_data() {
     let app = TestApp::new().await;
-    let configuration = get_configuration().expect("Failed to read configuration");
-    let connection_string = configuration.database.connection_string();
 
-    let mut connection = PgConnection::connect(&connection_string)
+    let mut connection = PgConnection::connect(&app.db_connection)
         .await
         .expect("Failed to connect to Postgres");
 
@@ -19,7 +16,7 @@ async fn full_url_returns_200_for_valid_form_data() {
 
     assert!(response.status().is_success());
 
-    let saved = sqlx::query!("SELECT url FROM briefly",)
+    let saved = sqlx::query!("SELECT url FROM briefly WHERE url = 'www.google.com'")
         .fetch_one(&mut connection)
         .await
         .expect("Failed to fetch saved shortened url");
