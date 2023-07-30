@@ -1,5 +1,7 @@
 pub mod configuration;
+pub mod model;
 pub mod routes;
+pub mod schema;
 
 use axum::routing::{get, post};
 use axum::Router;
