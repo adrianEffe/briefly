@@ -1,6 +1,6 @@
 use crate::{model::UrlRequestModel, schema::CreateShortUrlSchema, AppState};
 use axum::{extract::State, Json};
-use chrono::Local;
+use chrono::Utc;
 use std::sync::Arc;
 use uuid::Uuid;
 
@@ -14,7 +14,7 @@ pub async fn full_url(
         Uuid::new_v4(),
         payload.url.to_string(),
         Uuid::new_v4().to_string(), // TODO: - handle extension to be shortened url extension
-        Local::now().naive_utc()
+        Utc::now()
     )
     .fetch_one(&data.db)
     .await;
