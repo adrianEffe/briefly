@@ -1,16 +1,17 @@
 pub mod configuration;
 pub mod model;
+pub mod request_tracing;
 pub mod routes;
 pub mod schema;
 
 use axum::routing::{get, post};
 use axum::Router;
+use request_tracing::RequestSpan;
 use routes::{full_url, health_check};
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 use std::net::TcpListener;
 use std::sync::Arc;
-use tower_http::trace::{self, TraceLayer};
-use tracing::Level;
+use tower_http::trace::TraceLayer;
 
 pub async fn run(listener: TcpListener, db_connection: &str) {
     let pool = connect_to_database(db_connection)
@@ -34,11 +35,7 @@ pub fn app(app_state: Arc<AppState>) -> Router {
     Router::new()
         .route("/health_check", get(health_check))
         .route("/full_url", post(full_url))
-        .layer(
-            TraceLayer::new_for_http()
-                .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
-                .on_response(trace::DefaultOnResponse::new().level(Level::INFO)),
-        )
+        .layer(TraceLayer::new_for_http().make_span_with(RequestSpan))
         .with_state(app_state)
 }
 
