@@ -17,6 +17,8 @@ chrono = { version = "0.4.21", features = ["serde"] }
 tracing = "0.1.37"
 tracing-subscriber = "0.3.17"
 tower-http = { version = "0.4.3", features = ["trace"] }
+md5 = "0.7.0"
+base62 = "2.0.2"
 
 [dependencies.sqlx]
 version = "0.7.1"
