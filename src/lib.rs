@@ -1,3 +1,4 @@
+pub mod app_error;
 pub mod configuration;
 pub mod key_generator;
 pub mod model;
