@@ -38,3 +38,11 @@ async fn redirect_303_for_valid_redirection() {
     let location = response.headers().get(LOCATION).unwrap().to_str().unwrap();
     assert_eq!(url, location);
 }
+
+#[tokio::test]
+async fn redirect_500_for_invalid_extension() {
+    let app = TestApp::new().await;
+
+    let response = app.get("-12-12-12").send().await.unwrap();
+    assert_eq!(500, response.status().as_u16());
+}
