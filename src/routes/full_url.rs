@@ -33,7 +33,7 @@ pub async fn full_url(
         }
     }
 
-    return "internal server error".to_string();
+    "internal server error".to_string()
 }
 
 async fn insert_in_db(
