@@ -9,7 +9,7 @@ pub mod schema;
 use axum::routing::{get, post};
 use axum::Router;
 use request_tracing::RequestSpan;
-use routes::{full_url, health_check};
+use routes::{full_url, health_check, redirect};
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 use std::net::TcpListener;
 use std::sync::Arc;
@@ -37,6 +37,7 @@ pub fn app(app_state: Arc<AppState>) -> Router {
     Router::new()
         .route("/health_check", get(health_check))
         .route("/full_url", post(full_url))
+        .route("/:extension", get(redirect))
         .layer(TraceLayer::new_for_http().make_span_with(RequestSpan))
         .with_state(app_state)
 }
