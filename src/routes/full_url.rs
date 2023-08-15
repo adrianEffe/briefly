@@ -10,25 +10,30 @@ use uuid::Uuid;
 pub async fn full_url(
     State(data): State<Arc<AppState>>,
     Json(payload): Json<CreateShortUrlSchema>,
-) {
+) -> String {
     let mut retry_count = 3;
 
     while retry_count > 0 {
         let query_result = insert_in_db(&payload.url, State(data.clone())).await;
 
         match query_result {
-            Ok(note) => {
-                println!("okay received testing: {:?}", note);
-                break;
+            Ok(request) => {
+                println!("okay received testing: {:?}", request);
+                return request.extension;
             }
             Err(e) => {
                 println!("failed with error: {:?}", e);
                 //TODO : - For now assume is failing because of error code 23505, that stands for
                 //duplicate key
-                retry_count += 1;
+                if retry_count == 1 {
+                    return "error".to_string();
+                }
+                retry_count -= 1;
             }
         }
     }
+
+    return "internal server error".to_string();
 }
 
 async fn insert_in_db(
