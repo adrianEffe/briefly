@@ -16,7 +16,7 @@ pub async fn full_url(
     let mut retry_count = 3;
 
     while retry_count > 0 {
-        let query_result = insert_in_db(&payload.url, State(data.clone())).await;
+        let query_result = insert_in_db(&payload.url, State(&data)).await;
 
         match query_result {
             Ok(request) => {
@@ -35,7 +35,7 @@ pub async fn full_url(
 
 async fn insert_in_db(
     url: &str,
-    State(data): State<Arc<AppState>>,
+    State(data): State<&Arc<AppState>>,
 ) -> Result<UrlRequestModel, Error> {
     let uuid = Uuid::new_v4();
     let modifier = uuid.to_string() + url;
