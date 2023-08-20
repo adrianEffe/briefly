@@ -22,7 +22,7 @@ async fn fetch_from_db(
 ) -> Result<UrlRequestModel, Error> {
     sqlx::query_as!(
         UrlRequestModel,
-        "SELECT * FROM briefly WHERE extension = $1",
+        "SELECT * FROM briefly WHERE id = $1",
         extension
     )
     .fetch_one(&data.db)
