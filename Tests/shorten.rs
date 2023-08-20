@@ -4,7 +4,7 @@ use shared::test_app::TestApp;
 use sqlx::{Connection, PgConnection};
 
 #[tokio::test]
-async fn full_url_returns_200_for_valid_form_data() {
+async fn shorten_returns_200_for_valid_form_data() {
     let app = TestApp::new().await;
 
     let mut connection = PgConnection::connect(&app.db_connection)
@@ -12,7 +12,7 @@ async fn full_url_returns_200_for_valid_form_data() {
         .expect("Failed to connect to Postgres");
 
     let body = String::from("{\"url\":\"www.google.com\"}");
-    let response = app.post("full_url", body).send().await.unwrap();
+    let response = app.post("shorten", body).send().await.unwrap();
 
     assert!(response.status().is_success());
 
@@ -25,13 +25,13 @@ async fn full_url_returns_200_for_valid_form_data() {
 }
 
 #[tokio::test]
-async fn full_url_returns_422_for_missing_data() {
+async fn shorten_returns_422_for_missing_data() {
     let app = TestApp::new().await;
 
     let test_case = ("{\"\":\"\"}", "missing the url");
 
     let response = app
-        .post("full_url", test_case.0.to_string())
+        .post("shorten", test_case.0.to_string())
         .send()
         .await
         .unwrap();
@@ -45,11 +45,11 @@ async fn full_url_returns_422_for_missing_data() {
 }
 
 #[tokio::test]
-async fn full_url_returns_400_for_bad_request() {
+async fn shorten_returns_400_for_bad_request() {
     let app = TestApp::new().await;
 
     let body = String::from("bad request");
-    let response = app.post("full_url", body).send().await.unwrap();
+    let response = app.post("shorten", body).send().await.unwrap();
     assert_eq!(
         400,
         response.status().as_u16(),
