@@ -8,7 +8,7 @@ use chrono::Utc;
 use sqlx::Error;
 use std::sync::Arc;
 
-pub async fn full_url(
+pub async fn shorten(
     State(data): State<Arc<AppState>>,
     Json(payload): Json<CreateShortUrlSchema>,
 ) -> Result<String, AppError> {
