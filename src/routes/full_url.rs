@@ -7,7 +7,6 @@ use axum::{extract::State, Json};
 use chrono::Utc;
 use sqlx::Error;
 use std::sync::Arc;
-use uuid::Uuid;
 
 pub async fn full_url(
     State(data): State<Arc<AppState>>,
@@ -20,7 +19,7 @@ pub async fn full_url(
 
         match query_result {
             Ok(request) => {
-                return Ok(request.extension);
+                return Ok(request.id);
             }
             Err(e) => {
                 if retry_count == 1 {
@@ -37,17 +36,16 @@ async fn insert_in_db(
     url: &str,
     State(data): State<&Arc<AppState>>,
 ) -> Result<UrlRequestModel, Error> {
-    let uuid = Uuid::new_v4();
-    let modifier = uuid.to_string() + url;
-    let shortened = generate(&modifier);
+    let date = Utc::now();
+    let modifier = date.to_string() + url;
+    let id = generate(&modifier);
 
     sqlx::query_as!(
         UrlRequestModel,
-        "INSERT INTO briefly (id, url, extension, created_at) VALUES ($1, $2, $3, $4) RETURNING *",
-        uuid,
+        "INSERT INTO briefly (id, url, created_at) VALUES ($1, $2, $3) RETURNING *",
+        id,
         url.to_string(),
-        shortened,
-        Utc::now()
+        date
     )
     .fetch_one(&data.db)
     .await
