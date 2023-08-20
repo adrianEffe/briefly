@@ -1,4 +1,4 @@
-use briefly::{configuration::get_configuration, run};
+use briefly::{app::run, configuration::get_configuration};
 use std::net::TcpListener;
 use std::sync::Arc;
 

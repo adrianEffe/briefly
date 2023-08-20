@@ -1,4 +1,4 @@
-use crate::{app_error::AppError, model::UrlRequestModel, AppState};
+use crate::{app::AppState, app_error::AppError, model::UrlRequestModel};
 use axum::{
     extract::{Path, State},
     response::Redirect,
