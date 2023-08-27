@@ -1,6 +1,6 @@
 use crate::{
-    app_error::AppError, key_generator::generate, model::UrlRequestModel,
-    schema::CreateShortUrlSchema, AppState,
+    app::AppState, app_error::AppError, key_generator::generate, model::UrlRequestModel,
+    schema::CreateShortUrlSchema,
 };
 use anyhow::anyhow;
 use axum::{extract::State, Json};
