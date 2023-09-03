@@ -1,6 +1,5 @@
-use briefly::{app::run, configuration::get_configuration};
-use std::net::TcpListener;
-use std::sync::Arc;
+use briefly::{app::connect_to_database, app::run, configuration::get_configuration};
+use std::{net::TcpListener, sync::Arc};
 
 pub struct TestApp {
     pub base_url: String,
@@ -16,9 +15,12 @@ impl TestApp {
         let configuration = get_configuration().expect("Failed to read configuration");
         let connection_string = Arc::new(configuration.database.connection_string());
         let db_connection = Arc::clone(&connection_string);
+        let pool = connect_to_database(&connection_string)
+            .await
+            .expect("Failed to connect to databse");
 
         tokio::spawn(async move {
-            run(listener, &connection_string).await;
+            run(listener, pool).await;
         });
 
         TestApp {
