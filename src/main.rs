@@ -1,19 +1,20 @@
-use briefly::{app::run, configuration::get_configuration};
-use std::net::TcpListener;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use briefly::app::{app, AppState};
+use shuttle_shared_db::Postgres;
+use sqlx::PgPool;
+use std::sync::Arc;
+use tracing::info;
 
-#[tokio::main]
-async fn main() {
-    tracing_subscriber::registry()
-        .with(tracing_subscriber::fmt::layer())
-        .init();
+#[shuttle_runtime::main]
+pub async fn axum(#[Postgres] pool: PgPool) -> shuttle_axum::ShuttleAxum {
+    info!("Running database migration");
 
-    let configuration = get_configuration().expect("Failed to read configuration");
-    let connection_string = configuration.database.connection_string();
-    let address = format!(
-        "{}:{}",
-        configuration.application.host, configuration.application.port
-    );
-    let listener = TcpListener::bind(address).expect("Could not bind to socket");
-    run(listener, &connection_string).await
+    sqlx::migrate!()
+        .run(&pool)
+        .await
+        .expect("Migrations failed :(");
+
+    let app_state = Arc::new(AppState { db: pool.clone() });
+    let app = app(app_state);
+
+    Ok(app.into())
 }

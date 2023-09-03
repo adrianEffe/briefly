@@ -256,7 +256,6 @@ dependencies = [
  "serde",
  "shuttle-axum",
  "shuttle-runtime",
- "shuttle-secrets",
  "shuttle-shared-db",
  "sqlx",
  "tokio",
@@ -2203,17 +2202,6 @@ dependencies = [
  "tower",
  "tracing",
  "tracing-subscriber",
-]
-
-[[package]]
-name = "shuttle-secrets"
-version = "0.25.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a485ac7b3dc6d18aea681089c0816302237e2d91fc090f26ff05a2983ec92f9"
-dependencies = [
- "async-trait",
- "serde",
- "shuttle-service",
 ]
 
 [[package]]

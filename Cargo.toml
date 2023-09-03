@@ -22,7 +22,6 @@ base62 = "2.0.2"
 anyhow = "1.0.73"
 shuttle-runtime = "0.25.0"
 shuttle-axum = "0.25.0"
-shuttle-secrets = "0.25.0"
 shuttle-shared-db = { version = "0.25.0", features = ["postgres"] }
 
 [dependencies.sqlx]
