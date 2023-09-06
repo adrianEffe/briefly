@@ -25,6 +25,59 @@ async fn shorten_returns_200_for_valid_form_data() {
 }
 
 #[tokio::test]
+async fn shorten_with_extension_returns_200_for_valid_form_data() {
+    let app = TestApp::new().await;
+
+    let mut connection = PgConnection::connect(&app.db_connection)
+        .await
+        .expect("Failed to connect to Postgres");
+
+    let url = "https://rust-lang.org";
+
+    let custom_extension = "rustlang";
+
+    let body = format!(
+        "{{\"url\":\"{}\",\"extension\":\"{}\"}}",
+        url, custom_extension
+    );
+
+    let _ = sqlx::query!("DELETE FROM briefly WHERE id = $1", custom_extension)
+        .execute(&mut connection)
+        .await;
+
+    let response = app.post("shorten", body).send().await.unwrap();
+
+    assert!(response.status().is_success());
+
+    let saved = sqlx::query!("SELECT url FROM briefly WHERE id = $1", custom_extension)
+        .fetch_one(&mut connection)
+        .await
+        .expect("Failed to fetch saved shortened url");
+
+    assert_eq!(saved.url, url);
+}
+
+#[tokio::test]
+async fn shorten_with_extension_returns_500_for_existing_record() {
+    let app = TestApp::new().await;
+
+    let url = "https://github.com";
+
+    let custom_extension = "github";
+
+    let body = format!(
+        "{{\"url\":\"{}\",\"extension\":\"{}\"}}",
+        url, custom_extension
+    );
+
+    let _ = app.post("shorten", body.clone()).send().await.unwrap();
+
+    let response = app.post("shorten", body).send().await.unwrap();
+
+    assert!(response.status().is_server_error());
+}
+
+#[tokio::test]
 async fn shorten_returns_422_for_missing_data() {
     let app = TestApp::new().await;
 

@@ -15,7 +15,8 @@ pub async fn shorten(
     let mut retry_count = 3;
 
     while retry_count > 0 {
-        let query_result = insert_in_db(&payload.url, State(&data)).await;
+        let query_result =
+            insert_in_db(&payload.url, payload.extension.as_deref(), State(&data)).await;
 
         match query_result {
             Ok(request) => {
@@ -34,17 +35,20 @@ pub async fn shorten(
 
 async fn insert_in_db(
     url: &str,
+    extension: Option<&str>,
     State(data): State<&Arc<AppState>>,
 ) -> Result<UrlRequestModel, Error> {
     let date = Utc::now();
-    let modifier = date.to_string() + url;
-    let id = generate(&modifier);
+    let id = extension.map(|ext| ext.to_string()).or_else(|| {
+        let modifier = format!("{}{}", date, url);
+        Some(generate(&modifier))
+    });
 
     sqlx::query_as!(
         UrlRequestModel,
         "INSERT INTO briefly (id, url, created_at) VALUES ($1, $2, $3) RETURNING *",
         id,
-        url.to_string(),
+        url,
         date
     )
     .fetch_one(&data.db)
