@@ -1,5 +1,7 @@
 pub mod shared;
 
+use briefly::model::ShortenedUrlResponseModel;
+use serde_json::from_slice;
 use shared::test_app::TestApp;
 use sqlx::{Connection, PgConnection};
 
@@ -47,7 +49,14 @@ async fn shorten_with_extension_returns_200_for_valid_form_data() {
 
     let response = app.post("shorten", body).send().await.unwrap();
 
-    assert!(response.status().is_success());
+    if response.status().is_success() {
+        let response_body_bytes = response.bytes().await.unwrap().to_vec();
+        let shortened_url_response: ShortenedUrlResponseModel =
+            from_slice(&response_body_bytes).unwrap();
+        assert_eq!(custom_extension, shortened_url_response.extension)
+    } else {
+        panic!("Test failed: Response status is not successful");
+    }
 
     let saved = sqlx::query!("SELECT url FROM briefly WHERE id = $1", custom_extension)
         .fetch_one(&mut connection)

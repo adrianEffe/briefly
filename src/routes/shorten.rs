@@ -1,6 +1,6 @@
 use crate::{
-    app::AppState, app_error::AppError, key_generator::generate, model::UrlRequestModel,
-    schema::CreateShortUrlSchema,
+    app::AppState, app_error::AppError, key_generator::generate, model::ShortenedUrlResponseModel,
+    model::UrlRequestModel, schema::CreateShortUrlSchema,
 };
 use anyhow::anyhow;
 use axum::{extract::State, Json};
@@ -11,7 +11,7 @@ use std::sync::Arc;
 pub async fn shorten(
     State(data): State<Arc<AppState>>,
     Json(payload): Json<CreateShortUrlSchema>,
-) -> Result<String, AppError> {
+) -> Result<Json<ShortenedUrlResponseModel>, AppError> {
     let mut retry_count = 3;
 
     while retry_count > 0 {
@@ -20,7 +20,10 @@ pub async fn shorten(
 
         match query_result {
             Ok(request) => {
-                return Ok(request.id);
+                let response = ShortenedUrlResponseModel {
+                    extension: request.id,
+                };
+                return Ok(Json(response));
             }
             Err(e) => {
                 if retry_count == 1 {
