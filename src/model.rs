@@ -8,3 +8,8 @@ pub struct UrlRequestModel {
     pub url: String,
     pub created_at: Option<DateTime<Utc>>,
 }
+
+#[derive(Debug, FromRow, Deserialize, Serialize)]
+pub struct ShortenedUrlResponseModel {
+    pub extension: String,
+}
