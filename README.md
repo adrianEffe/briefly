@@ -1,4 +1,6 @@
-# Briefly Service
+# Briefly
+[![CI (master)](https://github.com/adrianEffe/briefly/actions/workflows/Tests.yml/badge.svg)](https://github.com/adrianEffe/briefly/actions/workflows/Tests.yml)
+[![CD (master)](https://github.com/adrianEffe/briefly/actions/workflows/shuttle_deploy.yml/badge.svg)](https://github.com/adrianEffe/briefly/actions/workflows/shuttle_deploy.yml)
 
 Briefly is a URL shortener service built with Rust, using the Axum web framework and SQLx for database interactions. It's a simple and efficient tool designed to shorten long URLs, making them easier to manage and share. This README provides an overview of Briefly's features and how to use it.
 
