@@ -89,9 +89,6 @@ Start the Briefly service with the following command:
   cargo shuttle run
   ```
 
-## Live Service
-https://briefly.shuttleapp.rs
 
-###### Briefly was created as a way to explore the Axum web framework and to showcase its capabilities. Additionally, it serves as a practical use case for Shuttle, a Rust deployment tool. Building a URL shortener provides valuable hands-on experience and is a great opportunity to learn more about these technologies.
 
 
